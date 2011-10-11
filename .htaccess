@@ -1,6 +1,6 @@
 RewriteEngine On
 Options +FollowSymlinks
-RewriteBase /click
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ click.php?string=$1   [L]
