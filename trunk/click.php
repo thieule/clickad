@@ -1,23 +1,23 @@
 <?php
+include('config.php');
 include('DBObject.php');
 $db=new DBObject();
-$db->db_connect('localhost','root','','medium');
+//conect to mysql
+$db->db_connect($conf_host,$conf_user,$conf_pass,$conf_db);
 
 $query_array = explode('/',@$_GET['string']);
 //set value
-list($option, $author, $type, $taget,$filename) = $query_array;
+@list($option, $author, $type, $taget,$filename) = $query_array;
 
 //insert to db
 $db->query("INSERT INTO `medium` (`option`,  `author`,`type`, `taget`, `ip`, `time`) VALUES (".$option.", ".$author.", ".$type.", ".$taget.", '".$_SERVER['REMOTE_ADDR']."', '".date('Y-m-d H:i:s')."')");
     if(empty($type)){
         if((int)$option==3){
-            echo'<div>
-                    <h3>Iframe</h3>
-                    <a target="_parent" href="http://localhost/click/'.$option.'/'.$author.'/1/1/">download</a>
-                </div>';
+            include('html/'.$conf_iframe_template);
         }else{
             // get file name
-            $filename=empty($filename)?'Snapshot_20110905_1.jpg':$filename;
+            $filename=empty($filename)?$conf_image_default:$filename;
+            
             $fileInfo = pathinfo($filename); 
             //return extension of file
             $ext = strtolower($fileInfo["extension"]); 
@@ -38,14 +38,13 @@ $db->query("INSERT INTO `medium` (`option`,  `author`,`type`, `taget`, `ip`, `ti
                     case "jpg": $ctype="image/jpg"; break;
                     default: $ctype="application/force-download";
                 }
-            
             @header ('content-type: '.$ctype);
             @readfile('images/'.$filename); 
         }
     }else{
         if(empty($taget))
-            header('Location: http://www.vnexpress.net/');
+            header("Location: $conf_home_link");
         else
-            header('Location: http://www.download.com/');
+            header("Location: $conf_download_link");
     }
 ?>
