@@ -8,9 +8,9 @@ $db->db_connect($conf_host,$conf_user,$conf_pass,$conf_db);
 $query_array = explode('/',@$_GET['string']);
 //set value
 @list($option, $author, $type, $taget,$filename) = $query_array;
-
+//echo base64_decode ($taget);die;
 //insert to db
-$db->query("INSERT INTO `medium` (`option`,  `author`,`type`, `taget`, `ip`, `time`) VALUES (".$option.", ".$author.", ".$type.", ".$taget.", '".$_SERVER['REMOTE_ADDR']."', '".date('Y-m-d H:i:s')."')");
+$db->query("INSERT INTO `medium` (`option`,  `author`,`type`, `taget`, `ip`, `time`) VALUES (".$option.", ".$author.", ".$type.", '".base64_decode ($taget)."', '".$_SERVER['REMOTE_ADDR']."', '".date('Y-m-d H:i:s')."')");
     if(empty($type)){
         if((int)$option==3){
             include('html/'.$conf_iframe_template);
@@ -42,9 +42,11 @@ $db->query("INSERT INTO `medium` (`option`,  `author`,`type`, `taget`, `ip`, `ti
             @readfile('images/'.$filename); 
         }
     }else{
-        if(empty($taget))
-            header("Location: $conf_home_link");
-        else
-            header("Location: $conf_download_link");
+        if(!empty($taget))
+		{
+			header("Location: ".base64_decode ($taget));
+		}else{
+			header("Location: $conf_default_link");
+		}
     }
 ?>
